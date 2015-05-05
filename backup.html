@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Pandemic Map</title>
+	<script src="libs/d3/d3.min.js" charset="utf-8"></script>
+	<script src="libs/jquery/jquery-2.1.1.min.js" charset="utf-8"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="http://d3js.org/topojson.v1.min.js"></script>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+
+	<style>
+	body{
+	        background: #ffffff;
+	    }
+
+	#maps{
+	    float:left;
+	    position: relative;
+	}
+
+	#map svg {
+	  background-color: #ffffff;
+	  border: 1px solid #404040;
+	}
+
+
+	.brush .extent {
+	  stroke: #000;
+	  fill-opacity: .125;
+	  shape-rendering: crispEdges;
+	}
+
+
+	.worldmap path {
+	  fill: crimson;
+	  stroke: #aaa;
+	  stroke-width: .5px;
+	}
+
+	.circle_path{
+	    fill: #eeeeee;
+	}
+
+	.stroke_path{
+	    stroke: #333333;
+	}
+
+	</style>
+
+
+    <body>
+        <div id="container">
+            <div id="dashboard">
+                <div id="maps">
+                    <div id="map"></div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+        var year = 2013 // Latest density models use densities from 2013
+        var country_index = 5 // For google reverse geocoding
+        var comp = "address_components" // Key to parse out country names
+        var airports = {}
+        var densities = {}
+        var migrations = {}
+
+        function getCountry(lat, lng) {
+            var latlng = new google.maps.LatLng(lat, lng);
+            var geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    first = results[0]; // Assume results have same country
+
+                    // Iterate through properties of result to find country
+                    for (var i = 0; i < first[comp].length; i++) {
+                        if (first[comp][i].types[0] == "country") {
+                            console.log(first[comp][i]["long_name"]);
+                            return first[comp][i]["long_name"]
+                        }
+                    };
+                }
+
+                return null;
+            });
+        }
+
+        $(function() {
+        	d3.csv("data/airports.dat", function(csv) {
+        		for (var i = 0; i < csv.length; i++) {
+        			if (!(csv[i].country in airports)) {
+        				airports[csv[i].country] = []
+        			}
+
+        			new_aiport = {
+        				"lat": csv[i].lat,
+        				"lng": csv[i].lng,
+        				"id": csv[i].id
+        			}
+
+        			airports[csv[i].country].push(new_aiport)
+        		};
+        		// console.log(airports);
+        	});
+
+        	d3.csv("data/densities.csv", function(csv) {
+        		for (var i = 0; i < csv.length; i++) {
+        			densities[csv[i]["Country Name"]] = csv[i][year]
+        		};
+        		// console.log(densities);
+        	});
+
+        	d3.csv("data/migration.csv", function(csv) {
+        		for (var i = 0; i < csv.length; i++) {
+        			out_country = csv[i]["Source"]
+        			migrations[out_country] = {}
+
+        			for (var key in csv[i]) {
+        				migrations[out_country][key] = csv[i][key]
+        			}
+        		};
+        		// console.log(migrations);
+        	});
+
+            var country = getCountry(40.714224,-73.961452)
+        })
+
+        </script>
+
+        <script type="text/javascript" src="map.js"></script>
+    </body>
+</html>

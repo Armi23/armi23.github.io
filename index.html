@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8">
+  <head>
+    <title>Pandemic Map</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  </head>
+  <body>
+    <main>
+      <h1>Pandemic Map</h1>
+      <p>Instructions: To map your disease, click on the map to mark your starting point. You can select a disease from the drop down, or you can create your own disease by changing the S (susceptibility rate), the I (infection rate), and the R (recovery rate). You can pan around the map by clicking your mouse and dragging the map. You can zoom by scrolling on the screen.</p>
+      
+      <div class="row">
+        <div class="col-md-9">
+          <div id="container"></div>
+        </div>
+        <div id="controls" class="col-md-3">
+        </div>
+      </div>
+      <div class="row">
+        <div id="timeline" class="col-md-6">
+        </div>
+        <div id="barchart" class="col-md-6">
+        </div>
+      </div>
+    </main>
+    <footer>
+      <script src="http://d3js.org/d3.v3.min.js"></script>
+      <script src="http://d3js.org/topojson.v1.min.js"></script>
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+      <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+      <script src="libs/jquery-2.1.1.min.js"></script>
+      <script src="js/model.js"></script>
+      <script src="js/map.js"></script>
+      <script src="js/barchart.js"></script>
+      <script src="js/controls.js"></script>
+      <script src="js/timeline.js"></script>
+      <script src="js/geocoder.js"></script>
+      
+      <script>
+        $(function(){ 
+          
+          MyEventHandler = {};
+          var init = function(){
+            
+            var barchart = new BarChart(d3.select("#barchart"));
+            var timeline = new TimeVis(d3.select("#timeline"), MyEventHandler);
+             $(MyEventHandler).bind("timeTick", function(e, data) {
+              timeline.updateData(data["time"]);
+              barchart.updateData(data["counts"], data["country"])
+             });
+
+             $(MyEventHandler).bind("hover", function(e, data) {
+              barchart.updateData(data["counts"], data["country"])
+             })
+
+          }
+          
+          init();
+          })
+      </script>
+    </footer>
+  </body>
+</html>
