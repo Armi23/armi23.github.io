@@ -208,7 +208,7 @@ var text_latlong = control_svg.append("text")
 // Add start button
 $("#controls").append($("<input>")
               .attr("type","submit")
-              .attr("value","Start")
+              .attr("value","Click on map")
               .attr("id","start"));
 
 // Set functionality of start button

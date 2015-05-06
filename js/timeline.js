@@ -53,7 +53,7 @@ TimeVis.prototype.initVis = function(){
   this.svg.append("text")
     .attr("class", "x label")
     .attr("text-anchor", "end")
-    .attr("x", this.width)
+    .attr("x", this.width + 6)
     .attr("y", this.height - 6)
     .text("Time");
     

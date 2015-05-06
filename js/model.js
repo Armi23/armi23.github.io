@@ -100,6 +100,7 @@ function launchModel (geocode, lat, lng) {
 
   // Enable start button
   $("#start").prop("disabled", false);
+  $("#start").attr("value", "Start")
 }
 
 // Runs simulation
