@@ -1,220 +1,233 @@
-// This is where we will edit the parameters of the disease. We will have some presets for different diseases but we will also allow users to change these manually
+/*
+ * This class defines the control box and its functionality
+ */
 
-
+// Define global constants
 var c_width = 200;
-var c_height = 240;
+var c_height = 275;
 var margin = 40;
+var pos1 = 6;
+var pos2 = 2.35;
+var pos3 = 1.45;
+var pos4 = 6;
 
+// The parameters can have values between 0 and 1
 var x = d3.scale.linear()
     .domain([0, 1])
     .range([10, c_width-margin])
     .clamp(true);
 
-var brush_s = d3.svg.brush()
+// Defines the value for steps of the animation
+var step_x = d3.scale.linear()
+    .domain([20, 100])
+    .range([10, c_width-margin])
+    .clamp(true);
+
+// Defines interaction for beta parameter
+var brush_beta = d3.svg.brush()
     .x(x)
     .extent([0, 0])
-    .on("brush", brushed_s);
+    .on("brush", brushed_beta);
 
+// Add control box
 var control_svg = d3.select("#controls").append("svg")
     .attr("width", c_width)
     .attr("height", c_height);
 
+// Add slider group
 control_svg.append("g")
     .attr("class", "x axis")
-    .attr("transform", "translate(0," + c_height / 5 + ")")
+    .attr("transform", "translate(0," + c_height / pos1 + ")")
     .call(d3.svg.axis()
-      .scale(x)
-      .orient("bottom")
-      .tickFormat(function(d) { return d; })
-      .tickSize(0)
-      .tickPadding(12))
-  .select(".domain")
-  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+    .scale(x)
+    .orient("bottom")
+    .tickFormat(function(d) { return d; })
+    .tickSize(0)
+    .tickPadding(12))
+    .select(".domain")
+    .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
     .attr("class", "halo");
 
-
-
-var slider_s = control_svg.append("g")
+// Add beta slider and functionality
+var slider_beta = control_svg.append("g")
     .attr("class", "slider")
-    .call(brush_s);
+    .call(brush_beta);
 
-var text_s = control_svg.append("text")
+var text_beta = control_svg.append("text")
     .attr("class", "text")
     .text("Define Beta: ")
     .attr("x", "0")
     .attr("y", "25");
 
-slider_s.selectAll(".extent,.resize")
+slider_beta.selectAll(".extent,.resize")
     .remove();
 
-//slider.select(".background")
-//    .attr("height", height);
-
-var handle_s = slider_s.append("circle")
+var handle_beta = slider_beta.append("circle")
     .attr("class", "handle")
-    .attr("transform", "translate(0," + c_height / 5 + ")")
+    .attr("transform", "translate(0," + c_height / pos1 + ")")
     .attr("r", 9);
 
-slider_s
-    .call(brush_s.event);
-//  .transition() // gratuitous intro!
-//    .duration(750)
-//    .call(brush.extent([70, 70]))
-//    .call(brush.event);
+slider_beta
+    .call(brush_beta.event);
 
-function brushed_s() {
-  var value_s = brush_s.extent()[0];
+function brushed_beta() {
+  var value_beta = brush_beta.extent()[0];
 
   if (d3.event.sourceEvent) { // not a programmatic event
-    value_s = x.invert(d3.mouse(this)[0]);
-    brush_s.extent([value_s, value_s]);
+    value_beta = x.invert(d3.mouse(this)[0]);
+    brush_beta.extent([value_beta, value_beta]);
   }
 
-  handle_s.attr("cx", x(value_s));
-//  d3.select("body").style("background-color", d3.hsl(value, .8, .8));
+  handle_beta.attr("cx", x(value_beta));
     
-    beta = value_s;
+  beta = value_beta;
 }
 
-
-
-// i slider
-
-var brush_i = d3.svg.brush()
+// Set up kill slider in the same way
+var brush_kill = d3.svg.brush()
     .x(x)
     .extent([0, 0])
-    .on("brush", brushed_i);
+    .on("brush", brushed_kill);
 
 control_svg.append("g")
     .attr("class", "x axis")
-    .attr("transform", "translate(0," + c_height / 2 + ")")
+    .attr("transform", "translate(0," + c_height / pos2 + ")")
     .call(d3.svg.axis()
-      .scale(x)
-      .orient("bottom")
-      .tickFormat(function(d) { return d; })
-      .tickSize(0)
-      .tickPadding(12))
-  .select(".domain")
-  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+    .scale(x)
+    .orient("bottom")
+    .tickFormat(function(d) { return d; })
+    .tickSize(0)
+    .tickPadding(12))
+    .select(".domain")
+    .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
     .attr("class", "halo");
 
-var slider_i = control_svg.append("g")
+var slider_kill = control_svg.append("g")
     .attr("class", "slider")
-    .call(brush_i);
+    .call(brush_kill);
 
-var text_i = control_svg.append("text")
+var text_kill = control_svg.append("text")
     .attr("class", "text")
     .text("Define the kill rate: ")
     .attr("x", "0")
     .attr("y", "100");
 
-slider_i.selectAll(".extent,.resize")
+slider_kill.selectAll(".extent,.resize")
     .remove();
 
-//slider.select(".background")
-//    .attr("height", height);
-
-var handle_i = slider_i.append("circle")
+var handle_kill = slider_kill.append("circle")
     .attr("class", "handle")
-    .attr("transform", "translate(0," + c_height / 2 + ")")
+    .attr("transform", "translate(0," + c_height / pos2 + ")")
     .attr("r", 9);
 
-slider_i
-    .call(brush_i.event);
-//  .transition() // gratuitous intro!
-//    .duration(750)
-//    .call(brush.extent([70, 70]))
-//    .call(brush.event);
+slider_kill
+    .call(brush_kill.event);
 
-function brushed_i() {
-  var value_i = brush_i.extent()[0];
+function brushed_kill() {
+  var value_kill = brush_kill.extent()[0];
 
   if (d3.event.sourceEvent) { // not a programmatic event
-    value_i = x.invert(d3.mouse(this)[0]);
-    brush_i.extent([value_i, value_i]);
+    value_kill = x.invert(d3.mouse(this)[0]);
+    brush_kill.extent([value_kill, value_kill]);
   }
 
-  handle_i.attr("cx", x(value_i));
-//  d3.select("body").style("background-color", d3.hsl(value, .8, .8));
+  handle_kill.attr("cx", x(value_kill));
     
-    console.log("Sliding I: ", value_i);
-    kill = value_i;
+  kill = value_kill;
 }
 
-
-// Time slider
-
-var brush_r = d3.svg.brush()
-    .x(x)
+// Step slider is set up similarly but with a different scale
+var brush_steps = d3.svg.brush()
+    .x(step_x)
     .extent([0, 0])
-    .on("brush", brushed_r);
+    .on("brush", brushed_steps);
 
 control_svg.append("g")
     .attr("class", "x axis")
-    .attr("transform", "translate(0," + c_height / 1.2 + ")")
+    .attr("transform", "translate(0," + c_height / pos3 + ")")
     .call(d3.svg.axis()
-      .scale(x)
-      .orient("bottom")
-      .tickFormat(function(d) { return d; })
-      .tickSize(0)
-      .tickPadding(12))
-  .select(".domain")
-  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+    .scale(step_x)
+    .orient("bottom")
+    .tickFormat(function(d) { return d; })
+    .tickSize(0)
+    .tickPadding(12))
+    .select(".domain")
+    .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
     .attr("class", "halo");
 
-var slider_r = control_svg.append("g")
+var slider_steps = control_svg.append("g")
     .attr("class", "slider")
-    .call(brush_r);
+    .call(brush_steps);
 
-var text_r = control_svg.append("text")
+var text_steps = control_svg.append("text")
     .attr("class", "text")
     .text("Define number of steps: ")
     .attr("x", "0")
     .attr("y", "175");
 
 
-slider_r.selectAll(".extent,.resize")
+slider_steps.selectAll(".extent,.resize")
     .remove();
 
-//slider.select(".background")
-//    .attr("height", height);
-
-var handle_r = slider_r.append("circle")
+var handle_steps = slider_steps.append("circle")
     .attr("class", "handle")
-    .attr("transform", "translate(0," + c_height / 1.2 + ")")
+    .attr("transform", "translate(0," + c_height / pos3 + ")")
     .attr("r", 9);
 
-slider_r
-    .call(brush_r.event);
-//  .transition() // gratuitous intro!
-//    .duration(750)
-//    .call(brush.extent([70, 70]))
-//    .call(brush.event);
+slider_steps
+    .call(brush_steps.event);
 
-function brushed_r() {
-  var value_r = brush_r.extent()[0];
+function brushed_steps() {
+  var value_steps = brush_steps.extent()[0];
 
   if (d3.event.sourceEvent) { // not a programmatic event
-    value_r = x.invert(d3.mouse(this)[0]);
-    brush_r.extent([value_r, value_r]);
+    value_steps = step_x.invert(d3.mouse(this)[0]);
+    brush_steps.extent([value_steps, value_steps]);
   }
 
-  handle_r.attr("cx", x(value_r));
-//  d3.select("body").style("background-color", d3.hsl(value, .8, .8));
+  handle_steps.attr("cx", step_x(value_steps));
     
-    console.log("Sliding R: ", value_r);
-    stepLimit = value_r * 1000;
+  stepLimit = Math.max(value_steps, 20);
 }
 
-$("#controls").append($("<input>").attr("type","submit").attr("value","Start").attr("id","start"));
+// Add text box for point of origin
+var originText = control_svg.append("text")
+    .attr("class", "text")
+    .text("Point of Origin: ")
+    .attr("x", "0")
+    .attr("y", "242");
 
+// This text box will have actual coordinates
+var text_latlong = control_svg.append("text")
+    .attr("class", "text")
+    .text("Select a point")
+    .attr("x", "0")
+    .attr("y", "266")
+    .attr("id", "originBox");
+
+// Add start button
+$("#controls").append($("<input>")
+              .attr("type","submit")
+              .attr("value","Start")
+              .attr("id","start"));
+
+// Set functionality of start button
 var playing = false;
+$("#start").prop("disabled", true);
 $("#start").click(function(){
   if (!playing) {
-    runAnimation();
+    play();
   } else {
-    clearInterval(animation_interval)
-    playing = false;
-    $("#start").prop("value", "Play");
+    pause();
   }
-})
+});
+
+function play () {
+  runAnimation();
+}
+
+function pause () {
+  clearInterval(animation_interval)
+  playing = false;
+  $("#start").prop("value", "Play");
+}

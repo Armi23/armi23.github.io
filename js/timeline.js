@@ -1,18 +1,21 @@
+/*
+ * Contains code for making timeline visualization
+ */
 TimeVis = function(_parentElement, _eventHandler){
   this.parentElement = _parentElement;
   this.eventHandler = _eventHandler;
 
   // Define constants
   this.margin = {top: 20, right: 30, bottom: 30, left: 30};
-  this.width = 500 - this.margin.left - this.margin.right;
+  this.width = 490 - this.margin.left - this.margin.right;
   this.height = 200 - this.margin.top - this.margin.bottom;
 
   this.initVis();
 }
 
 
-/**
- * Method that sets up the SVG and the variables
+/*
+ * Sets up timeline vis 
  */
 TimeVis.prototype.initVis = function(){
   var that = this;
@@ -37,15 +40,36 @@ TimeVis.prototype.initVis = function(){
 
   // Add axes visual elements
   this.svg.append("g")
-    .attr("class", "x-axis")
+    .attr("class", "x axis")
     .attr("transform", "translate(0," + this.height + ")")
 
   this.svg.append("g")
-    .attr("class", "y-axis")
+    .attr("class", "y axis")
     .append("text")
     .attr("transform", "rotate(-90)")
     .attr("y", 6)
     .attr("dy", ".71em")
+  
+  this.svg.append("text")
+    .attr("class", "x label")
+    .attr("text-anchor", "end")
+    .attr("x", this.width)
+    .attr("y", this.height - 6)
+    .text("Time");
+    
+    this.svg.append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "end")
+    .attr("y", 6)
+    .attr("dy", ".25em")
+    .attr("transform", "rotate(-90)")
+    .text("Number of People/Global");
+  
+  this.svg.append("text")
+    .attr("class", "text")
+    .text("Disease progression timeline")
+    .attr("x", "20")
+    .attr("y", "0");
 
   this.xAxis = d3.svg.axis()
     .scale(that.x)
@@ -53,28 +77,28 @@ TimeVis.prototype.initVis = function(){
 
   this.yAxis = d3.svg.axis()
     .scale(that.y)
-    .orient("left");
+    .orient("left")
+    .tickFormat(d3.format("s"));
 
   // updates axis
-  this.svg.select(".x-axis")
+  this.svg.select(".x.axis")
     .call(that.xAxis);
 
-  this.svg.select(".y-axis")
+  this.svg.select(".y.axis")
     .call(that.yAxis)
 
 }
 
-/**
- * Method to wrangle the data. In this case it takes an options object
-  */
-TimeVis.prototype.updateData = function(data){
-  this.displayData = data;
+/*
+ * Called by event handler to update data
+ */
+TimeVis.prototype.updateData = function(timeData){
+  this.displayData = timeData;
   this.updateVis();
 }
 
-/**
- * the drawing function - should use the D3 selection, enter, exit
- * @param _options -- only needed if different kinds of updates are needed
+/*
+ * Changes visualization based on new data
  */
 TimeVis.prototype.updateVis = function(){
 	var that = this;
@@ -82,10 +106,10 @@ TimeVis.prototype.updateVis = function(){
   this.y.domain([0 , d3.extent(that.displayData)[1]]);
 
   // updates axis
-  this.svg.select(".x-axis")
+  this.svg.select(".x.axis")
     .call(that.xAxis);
 
-  this.svg.select(".y-axis")
+  this.svg.select(".y.axis")
     .call(that.yAxis)
 
   // updates graph

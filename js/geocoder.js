@@ -11,12 +11,10 @@ function requestGeocode(lat, lng, callback, options) {
     if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
       console.log("Over Query Limit, waiting on queries");
 
-      clearInterval(animation_interval)
-      playing = false;
-      $("#start").prop("value", "Play");
+      pause();
       setTimeout(function() {
-        runAnimation();
-      }, 2000);
+        play();
+      }, 4000);
     } else if (status == google.maps.GeocoderStatus.OK) {
       first = results[0]; // Assume results have same country
       callback(first, lat, lng, options)

@@ -73,24 +73,24 @@ function draw(topo) {
   country
     .on("mousemove", function(d,i) {
 
-      var country_name = d.properties.name
+      h_country = d.properties.name
       var mouse = d3.mouse(svg.node()).map( function(d) { return parseInt(d); } );
 
       tooltip.classed("hidden", false)
              .attr("style", "left:"+(mouse[0]+offsetL)+"px;top:"+(mouse[1]+offsetT)+"px")
-             .html(country_name);
+             .html(h_country);
 
+      $(MyEventHandler).trigger("hover", 
+                {
+                  "counts": country_data[h_country],
+                  "country": h_country
+                });
       })
       .on("mouseout",  function(d,i) {
         tooltip.classed("hidden", true);
       })
       .on("mouseover", function(d, i) {
-        h_country = d.properties.name;
-        $(MyEventHandler).trigger("hover", 
-                  {
-                    "counts": country_data[h_country],
-                    "country": h_country
-                  })
+
       });
 }
 
@@ -214,6 +214,10 @@ $(function() {
       migrations[out_country]["sum"] = 0
 
       for (var key in csv[i]) {
+        if (key == "sum" || key == "Source" || key == "World"  || key == "Other South"   || key == "Other North") {
+          continue;
+        }
+
         migrations[out_country][key] = csv[i][key]
         var num = parseFloat(csv[i][key])
         if (!isNaN(num)) {
@@ -241,7 +245,9 @@ function processGrid (grid) {
   for (var i in grid) {
     for (var j in grid[i]) {
       var block = grid[i][j];
-      infected += block.I;
+      if (!isNaN(block.I)) {
+        infected += block.I;
+      }
       data.push(block);
       if (!(block.country in country_data)) {
         country_data[block.country] = {"S": 0, "I": 0, "R": 0}
@@ -282,7 +288,7 @@ function mapVis (grid) {
           .attr("fill", function(d, i) {
             return colorCircle(d,i);
           })
-          .style("opacity", 0.3)
+          .style("opacity", 0.5)
 
   circles.transition()
           .duration(5)

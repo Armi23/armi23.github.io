@@ -7,9 +7,19 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
   </head>
   <body>
+    <header>
+        <h1>Pandemic Map</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="#">Youtube</a></li>
+            </ul>
+        </nav>
+    </header>
     <main>
-      <h1>Pandemic Map</h1>
-      <p>Instructions: To map your disease, click on the map to mark your starting point. You can select a disease from the drop down, or you can create your own disease by changing the S (susceptibility rate), the I (infection rate), and the R (recovery rate). You can pan around the map by clicking your mouse and dragging the map. You can zoom by scrolling on the screen.</p>
+      <p id="instructions">Instructions: To map your disease, click on the map to mark your starting point. If your starting point is valid, "Point of Origin" will update with the latitude and longitude. You can adjust the beta parameter (spreading rate) and the kill parameter (zombie death rate) as well as the number of steps the animation should take before it stops. After that, you can click the "Start" button to watch the Zombies take over the world. The meaning of the colors on the map can be found by clicking here, on <a id="legend" href="#popuplegend">Legend</a>.
+      </p>
       
       <div class="row">
         <div class="col-md-9">
@@ -24,6 +34,20 @@
         <div id="barchart" class="col-md-6">
         </div>
       </div>
+      
+      <div id="popuplegend" class="overlay">
+        <div class="popup">
+            <h2>Legend:</h2>
+            <a class="close" href="#">×</a>
+            <div class="content">
+                <ul class='legend-labels'>
+                    <li><span style='background:red;'></span>Infected</li>
+                    <li><span style='background:green;'></span>Susceptible</li>
+                    <li><span style='background:blue;'></span>Dead</li>
+                </ul>
+            </div>
+        </div>
+    </div>
     </main>
     <footer>
       <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -38,6 +62,7 @@
       <script src="js/controls.js"></script>
       <script src="js/timeline.js"></script>
       <script src="js/geocoder.js"></script>
+      <script src="js/konami.js"></script>
       
       <script>
         $(function(){ 
@@ -47,19 +72,19 @@
             
             var barchart = new BarChart(d3.select("#barchart"));
             var timeline = new TimeVis(d3.select("#timeline"), MyEventHandler);
-             $(MyEventHandler).bind("timeTick", function(e, data) {
+            
+            $(MyEventHandler).bind("timeTick", function(e, data) {
               timeline.updateData(data["time"]);
               barchart.updateData(data["counts"], data["country"])
-             });
+            });
 
-             $(MyEventHandler).bind("hover", function(e, data) {
+            $(MyEventHandler).bind("hover", function(e, data) {
               barchart.updateData(data["counts"], data["country"])
-             })
-
-          }
+            });
+          };
           
           init();
-          })
+        })
       </script>
     </footer>
   </body>
